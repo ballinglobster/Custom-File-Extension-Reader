@@ -1,0 +1,24 @@
+
+<meta charset="UTF-8" />
+<style>
+    body 
+    {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        background-color: rgb(20, 20, 20);
+        color: white;
+    }
+    #file-content 
+    {
+        color: black;
+        background-color: #f4f4f4;
+        padding: 10px;
+        border: 1px solid #ddd;
+        white-space: pre-wrap;
+        font-size: 16px;
+    }
+</style>
+<script src="ReadCustomExtension.js" defer></script>
+<input type="file" id="file-input" />
+<h3>Contents of the file:</h3>
+<pre id="file-content"></pre>
