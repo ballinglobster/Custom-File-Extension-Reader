@@ -1,0 +1,18 @@
+body 
+{
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 20px;
+    background-color: rgb(20, 20, 20); /* same color we set in Python */
+    color: white;
+}
+
+/* the pre element that shows file contents */
+#file-content 
+{
+    color: black;
+    background-color: #f4f4f4;
+    padding: 10px;
+    border: 1px solid #ddd;
+    white-space: pre-wrap;
+    font-size: 16px;
+}

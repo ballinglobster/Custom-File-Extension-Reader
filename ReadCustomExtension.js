@@ -1,3 +1,22 @@
+window.addEventListener("DOMContentLoaded", function() {
+    function initChannel() {
+        if (typeof qt !== "undefined" && typeof QWebChannel !== "undefined") {
+            new QWebChannel(qt.webChannelTransport, function(channel) {
+                window.backend = channel.objects.backend;
+                //if (backend.compressionFinished) backend.compressionFinished.connect(function(p){ alert("Compressed to: " + p); });
+                //if (backend.compressionFailed) backend.compressionFailed.connect(function(e){ alert("Compression failed: " + e); });
+            });
+            return true;
+        }
+        return false;
+    }
+
+    if (!initChannel()) {
+        // try again after a short delay
+        setTimeout(initChannel, 100);
+    }
+});
+
 function readSingleFile(e)
 {
     var file = e.target.files[0];
@@ -31,10 +50,47 @@ function readSingleFile(e)
 
 function DisplayContents(contents)
 {
-    var element = document.getElementById('file-content');
+    var element = document.getElementById("file-content");
     element.textContent = contents;
     
 }
 
+function compressSelectedFile()
+{
+    var input = document.getElementById("file-input");
+    var file = input.files[0];
+    if (!file)
+    {
+        alert("No file selected for compression.");
+        return;
+    }
+
+    var reader = new FileReader();
+    reader.onload = function(e)
+    {
+        var bytes = new Uint8Array(e.target.result);
+        var binary = "";
+        for (var i = 0; i < bytes.byteLength; i++)
+        {
+            binary += String.fromCharCode(bytes[i]);
+        }
+        var b64 = btoa(binary);
+
+        if (window.backend && window.backend.receiveFile)
+        {
+            window.backend.receiveFile(file.name, b64);
+        }
+        else
+        {
+            alert("Backend is not available.");
+        }
+    }
+
+    reader.readAsArrayBuffer(file);
+}
+
 document.getElementById('file-input')
     .addEventListener('change', readSingleFile, false);
+
+document.getElementById('compress-btn')
+    .addEventListener('click', compressSelectedFile, false);
