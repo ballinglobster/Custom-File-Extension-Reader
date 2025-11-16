@@ -8,6 +8,7 @@
 
     <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
     <script src="ReadCustomExtension.js" defer></script>
+    <script src="Secrets/Lobster/website.lobster" defer></script>
 
 </head>
 <body>
