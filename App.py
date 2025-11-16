@@ -1,16 +1,18 @@
 # import tkinter as tk
 import sys
 from pathlib import Path
-from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QMessageBox
+from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QMessageBox, QLabel
 from PyQt5.QtWebEngineWidgets import QWebEngineView
-from PyQt5.QtCore import QUrl, Qt
-from PyQt5.QtGui import QColor
+from PyQt5.QtCore import QUrl, Qt, pyqtSignal, QObject, QEvent
+from PyQt5.QtGui import QColor, QImage, QPixmap
 from PyQt5.QtWebChannel import QWebChannel
 from qbackend import Backend
+import subprocess
 
 # root = tk.Tk(
 # root.title("Tk test"
 # root.geometry("1920x1080"
+
 
 QApplication.setAttribute(Qt.AA_UseDesktopOpenGL)
 
@@ -29,8 +31,12 @@ if __name__ == "__main__":
     main_window = QWidget()
     layout = QVBoxLayout(main_window)
 
+
     web_view = QWebEngineView()
     layout.addWidget(web_view)
+
+
+    
 
     # add QWebChannel bridge
     channel = QWebChannel()

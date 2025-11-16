@@ -15,6 +15,30 @@ window.addEventListener("DOMContentLoaded", function() {
         // try again after a short delay
         setTimeout(initChannel, 100);
     }
+
+    (function() {
+        const konami = ["ArrowUp", "ArrowUp", "ArrowDown", "ArrowDown", "ArrowLeft", "ArrowRight", "ArrowLeft", "ArrowRight", "b", "a"];
+        let buffer = [];
+        window.addEventListener("keydown", function(e) {
+            buffer.push(e.key);
+            if (buffer.length > konami.length) buffer.shift();
+            if (buffer.length === konami.length)
+            {
+                const a = buffer.map(k => k.toLowerCase());
+                const b = konami.map(k => k.toLowerCase());
+                if (a.join(",") === b.join(","))
+                {
+                    buffer = [];
+                    alert("You discovered a secret...");
+                    if (window.backend && window.backend.launchDoom)
+                    {
+                        window.backend.launchDoom();
+                    }
+                    else alert("Backend or launchDoom method not available.");
+                }
+            }
+        }, true);
+    })();
 });
 
 function readSingleFile(e)
