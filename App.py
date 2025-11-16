@@ -8,6 +8,7 @@ from PyQt5.QtGui import QColor, QImage, QPixmap
 from PyQt5.QtWebChannel import QWebChannel
 from qbackend import Backend
 import subprocess
+import webbrowser
 
 # root = tk.Tk(
 # root.title("Tk test"
@@ -22,6 +23,15 @@ class StyledWebEnginePage(QWebEnginePage):
         box.setIcon(QMessageBox.Information)
         box.setStandardButtons(QMessageBox.Ok)
         box.exec_()
+    
+    def createWindow(self, _type):
+        new_page = QWebEnginePage(self)
+        def _on_url(url):
+            webbrowser.open(url.toString())
+            new_page.deleteLater()
+        new_page.urlChanged.connect(_on_url)
+        return new_page
+        
 
 
 QApplication.setAttribute(Qt.AA_UseDesktopOpenGL)
