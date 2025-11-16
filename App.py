@@ -2,16 +2,36 @@
 import sys
 from pathlib import Path
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QPushButton, QMessageBox, QLabel
-from PyQt5.QtWebEngineWidgets import QWebEngineView
+from PyQt5.QtWebEngineWidgets import QWebEngineView, QWebEnginePage
 from PyQt5.QtCore import QUrl, Qt, pyqtSignal, QObject, QEvent
 from PyQt5.QtGui import QColor, QImage, QPixmap
 from PyQt5.QtWebChannel import QWebChannel
 from qbackend import Backend
 import subprocess
+import webbrowser
 
 # root = tk.Tk(
 # root.title("Tk test"
 # root.geometry("1920x1080"
+
+class StyledWebEnginePage(QWebEnginePage):
+    def javaScriptAlert(self, securityOrigin, msg):
+        box = QMessageBox()
+        box.setWindowTitle("Alert")
+        box.setText(msg)
+        box.setStyleSheet("QMessageBox{ background: #ffd; text-align: left; } QMessageBox QLabel { color: #000; text-align: left; }")
+        box.setIcon(QMessageBox.Information)
+        box.setStandardButtons(QMessageBox.Ok)
+        box.exec_()
+    
+    def createWindow(self, _type):
+        new_page = QWebEnginePage(self)
+        def _on_url(url):
+            webbrowser.open(url.toString())
+            new_page.deleteLater()
+        new_page.urlChanged.connect(_on_url)
+        return new_page
+        
 
 
 QApplication.setAttribute(Qt.AA_UseDesktopOpenGL)
@@ -33,9 +53,10 @@ if __name__ == "__main__":
 
 
     web_view = QWebEngineView()
+    # layout.addWidget(web_view)
+
+    web_view.setPage(StyledWebEnginePage(web_view))
     layout.addWidget(web_view)
-
-
     
 
     # add QWebChannel bridge
