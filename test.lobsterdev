@@ -17,6 +17,7 @@
     <select id="compression-method">
         <option value="gzip">Gzip</option>
         <option value="7z">7z</option>
+        <option value="zip">Zip</option>
     </select>
     <button id="compress-btn">Compress selected file</button>
     <button id="decompress-btn">Decompress selected file</button>

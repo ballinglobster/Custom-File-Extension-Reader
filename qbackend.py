@@ -2,8 +2,8 @@ import threading
 from PyQt5.QtCore import QObject, pyqtSlot, pyqtSignal
 from pathlib import Path
 import base64
-from Compress import compress_file_as_gzip, compress_file_as_7z
-from Decompress import decompress_file_from_gzip, decompress_file_from_7z
+from Compress import compress_file_as_gzip, compress_file_as_7z, compress_file_as_zip
+from Decompress import decompress_file_from_gzip, decompress_file_from_7z, decompress_file_from_zip
 import subprocess
 import sys
 import os
@@ -37,6 +37,9 @@ class Backend(QObject):
                 if method in ("7z", "7zip"):
                     output_path = incoming / (filename + ".7z")
                     compress_file_as_7z(temp_path, output_path, arcname=filename)
+                elif method in ("zip",):
+                    output_path = incoming / (filename + ".zip")
+                    compress_file_as_zip(temp_path, output_path, arcname=filename)
                 else:
                     output_path = incoming / (filename + ".gz")
                     compress_file_as_gzip(temp_path, output_path)
@@ -64,6 +67,9 @@ class Backend(QObject):
             if method in ("7z", "7zip"):
                 output_path = target.with_suffix("")
                 decompress_file_from_7z(target, output_path)
+            elif method in ("zip",):
+                output_path = target.with_suffix("")
+                decompress_file_from_zip(target, output_path)
             else:
                 output_path = target.with_suffix("")
                 decompress_file_from_gzip(target, output_path)
