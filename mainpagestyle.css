@@ -2,8 +2,18 @@ body
 {
     font-family: Arial, Helvetica, sans-serif;
     margin: 20px;
-    background-color: rgb(20, 20, 20); /* same color we set in Python */
+    /* background-color: rgb(20, 20, 20); */
     color: white;
+    background-color: #151716;
+    opacity: 0.8;
+    background-image:  repeating-radial-gradient( circle at 0 0, transparent 0, #000000 10px );
+}
+
+* { box-sizing: border-box; }
+html 
+{
+    min-height: 100%;
+    margin: 0;
 }
 
 /* the pre element that shows file contents */
