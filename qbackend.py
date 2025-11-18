@@ -2,7 +2,7 @@ import threading
 from PyQt5.QtCore import QObject, pyqtSlot, pyqtSignal
 from pathlib import Path
 import base64
-from Compress import compress_file_as_gzip
+from Compress import compress_file_as_gzip, compress_file_as_7z
 import subprocess
 import sys
 
