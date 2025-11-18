@@ -1,6 +1,7 @@
 import gzip
 import shutil
 from pathlib import Path
+import py7zr
 
 def compress_file_as_gzip(input_path: Path, output_path: Path):
     with open(input_path, 'rb') as f_in:
@@ -8,3 +9,6 @@ def compress_file_as_gzip(input_path: Path, output_path: Path):
             with gzip.GzipFile(fileobj=f_out, mode='wb') as gz_out:
                 shutil.copyfileobj(f_in, gz_out)
 
+def compress_file_as_7z(input_path: Path, output_path: Path, arcname: str = None):
+    with py7zr.SevenZipFile(output_path, 'w') as archive:
+        archive.writeall(str(input_path), arcname or Path(input_path).name)

@@ -100,9 +100,50 @@ function compressSelectedFile()
         }
         var b64 = btoa(binary);
 
-        if (window.backend && window.backend.receiveFile)
+        var methodElement = document.getElementById("compression-method");
+        var method = (methodElement && methodElement.value) ? methodElement.value : "gzip";
+
+        if (window.backend && window.backend.receiveFileForCompression)
         {
-            window.backend.receiveFile(file.name, b64);
+            window.backend.receiveFileForCompression(file.name, b64, method);
+        }
+        else
+        {
+            alert("Backend is not available.");
+        }
+    }
+
+    reader.readAsArrayBuffer(file);
+}
+
+function decompressSelectedFile()
+{
+    var input = document.getElementById("file-input");
+    var file = input.files[0];
+    if (!file)
+    {
+        alert("No file selected for compression.");
+        return;
+    }
+
+    var reader = new FileReader();
+    reader.onload = function(e)
+    {
+        var bytes = new Uint8Array(e.target.result);
+        var binary = "";
+
+        for (var i = 0; i < bytes.byteLength; i++)
+        {
+            binary += String.fromCharCode(bytes[i]);
+        }
+        var b64 = btoa(binary);
+
+        var methodElement = document.getElementById("compression-method");
+        var method = (methodElement && methodElement.value) ? methodElement.value : "gzip";
+
+        if (window.backend && window.backend.receiveFileForDecompression)
+        {
+            window.backend.receiveFileForDecompression(file.name, b64, method);
         }
         else
         {
@@ -118,3 +159,6 @@ document.getElementById('file-input')
 
 document.getElementById('compress-btn')
     .addEventListener('click', compressSelectedFile, false);
+
+document.getElementById('decompress-btn')
+    .addEventListener('click', decompressSelectedFile, false);

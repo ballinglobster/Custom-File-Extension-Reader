@@ -3,8 +3,11 @@ from PyQt5.QtCore import QObject, pyqtSlot, pyqtSignal
 from pathlib import Path
 import base64
 from Compress import compress_file_as_gzip, compress_file_as_7z
+from Decompress import decompress_file_from_gzip, decompress_file_from_7z
 import subprocess
 import sys
+import os
+import tempfile
 
 class Backend(QObject):
     compressionFinished = pyqtSignal(str)
@@ -15,19 +18,60 @@ class Backend(QObject):
         super().__init__()
         self.base_dir = Path(base_dir)
 
-    @pyqtSlot(str, str)
-    def receiveFile(self, filename, data_b64):
+    @pyqtSlot(str, str, str)
+    def receiveFileForCompression(self, filename, data_b64, method):
+        try:
+            incoming = self.base_dir / "incoming"
+            incoming.mkdir(exist_ok=True)
+            # target = incoming / filename
+            # with open(target, 'wb') as f:
+            #     f.write(base64.b64decode(data_b64))
+            fd, tmp = tempfile.mkstemp(prefix="upload_", suffix=".tmp", dir=str(incoming))
+            os.close(fd)
+            temp_path = Path(tmp)
+            try:
+                with open(temp_path, 'wb') as f:
+                    f.write(base64.b64decode(data_b64))
+            
+                method = (method or "gzip").lower()
+                if method in ("7z", "7zip"):
+                    output_path = incoming / (filename + ".7z")
+                    compress_file_as_7z(temp_path, output_path, arcname=filename)
+                else:
+                    output_path = incoming / (filename + ".gz")
+                    compress_file_as_gzip(temp_path, output_path)
+
+                self.compressionFinished.emit(str(output_path))
+            finally:
+                try:
+                    if temp_path.exists():
+                        temp_path.unlink()
+                except Exception:
+                    pass
+        except Exception as e:
+            self.compressionFailed.emit(str(e))
+
+    @pyqtSlot(str, str, str)
+    def receiveFileForDecompression(self, filename, data_b64, method):
         try:
             incoming = self.base_dir / "incoming"
             incoming.mkdir(exist_ok=True)
             target = incoming / filename
             with open(target, 'wb') as f:
                 f.write(base64.b64decode(data_b64))
-            out = target.with_suffix(target.suffix + '.gz')
-            compress_file_as_gzip(target, out)
-            self.compressionFinished.emit(str(out))
+            
+            method = (method or "gzip").lower()
+            if method in ("7z", "7zip"):
+                output_path = target.with_suffix("")
+                decompress_file_from_7z(target, output_path)
+            else:
+                output_path = target.with_suffix("")
+                decompress_file_from_gzip(target, output_path)
+
+            self.compressionFinished.emit(str(output_path))
         except Exception as e:
             self.compressionFailed.emit(str(e))
+    
 
     @pyqtSlot()
     def launchDoom(self):
